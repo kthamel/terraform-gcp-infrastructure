@@ -12,6 +12,10 @@ Print the regions
 
 gcloud compute regions list
 
+Print the AZs
+
+gcloud compute zones list
+
 Print the region of the currently working project
 
 gcloud config list compute/region 
@@ -19,4 +23,16 @@ gcloud config list compute/region
 Set the region for the project, newly created without region
 
 gcloud config set compute/region us-east1
+
+Set the AZ for the project, according to the selected region from above
+
+gcloud config set compute/zone us-east1-b
+
+List authorized accounts to the project 
+
+gcloud auth list
+
+Change the active account 
+
+gcloud config set account kthamel.ptg@gmail.com
 
