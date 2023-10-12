@@ -36,3 +36,19 @@ Change the active account
 
 gcloud config set account kthamel.ptg@gmail.com
 
+Switch to the default account configurations
+
+gcloud config configurations activate default
+
+List available components
+
+gcloud components list
+
+Install new component from above list
+
+gcloud components install COMPONENT_ID
+
+Remove components installed from above list
+
+gcloud components removes COMPONENT_ID
+
