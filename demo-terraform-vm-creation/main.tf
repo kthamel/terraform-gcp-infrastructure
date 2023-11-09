@@ -16,3 +16,7 @@ resource "google_compute_instance" "kthamel-instance" {
     project = "kthamel-terraform-gcp"
   }
 }
+
+output "self_link_value" {
+  value = google_compute_instance.kthamel-instance.self_link
+}

@@ -52,6 +52,47 @@ resource "google_compute_firewall" "kthamel-vpc-test-firewall-icmp" {
   source_tags = ["kthemel-test"]
 }
 
+resource "google_compute_instance" "kthamel-instance-dev" {
+  name         = "kthamel-demo-instance-dev"
+  project      = "terraform-gcp-infrastructure"
+  machine_type = "e2-micro"
+  zone         = "us-central1-a"
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-11"
+    }
+  }
+  network_interface {
+    subnetwork = google_compute_subnetwork.kthamel-vpc-dev-subnet-public.name
+    access_config {}
+  }
+  labels = {
+    name    = "kthamel-terraform-gcp-instance-dev"
+    project = "kthamel-terraform-gcp"
+  }
+}
+
+resource "google_compute_instance" "kthamel-instance-test" {
+  name         = "kthamel-demo-instance-test"
+  project      = "terraform-gcp-infrastructure"
+  machine_type = "e2-micro"
+  zone         = "us-central1-a"
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-11"
+    }
+  }
+
+  network_interface {
+    subnetwork = google_compute_subnetwork.kthamel-vpc-test-subnet-public.name
+    access_config {}
+  }
+  labels = {
+    name    = "kthamel-terraform-gcp-instance-test"
+    project = "kthamel-terraform-gcp"
+  }
+}
+
 resource "google_compute_network_peering" "kthamel-vpc-dev-peering" {
   name         = "kthamel-vpc-dev-peering"
   network      = google_compute_network.kthamel-vpc-dev.self_link
