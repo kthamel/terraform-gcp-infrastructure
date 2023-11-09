@@ -1,14 +1,14 @@
 resource "google_compute_network" "kthamel-vpc-dev" {
   name                    = "kthamel-vpc-dev"
   project                 = "terraform-gcp-infrastructure"
-  auto_create_subnetworks = true
+  auto_create_subnetworks = false
   mtu                     = 1600
 }
 
 resource "google_compute_network" "kthamel-vpc-test" {
   name                    = "kthamel-vpc-test"
   project                 = "terraform-gcp-infrastructure"
-  auto_create_subnetworks = true
+  auto_create_subnetworks = false
   mtu                     = 1600
 }
 
@@ -52,8 +52,28 @@ resource "google_compute_firewall" "kthamel-vpc-test-firewall-icmp" {
   source_tags = ["kthemel-test"]
 }
 
-resource "google_compute_instance" "kthamel-instance-dev" {
-  name         = "kthamel-demo-instance-dev"
+# resource "google_compute_instance" "kthamel-instance-dev" {
+#   name         = "kthamel-demo-instance-dev"
+#   project      = "terraform-gcp-infrastructure"
+#   machine_type = "e2-micro"
+#   zone         = "us-central1-a"
+#   boot_disk {
+#     initialize_params {
+#       image = "debian-cloud/debian-11"
+#     }
+#   }
+#   network_interface {
+#     subnetwork = google_compute_subnetwork.kthamel-vpc-dev-subnet-public.name
+#     access_config {}
+#   }
+#   labels = {
+#     name    = "kthamel-terraform-gcp-instance-dev"
+#     project = "kthamel-terraform-gcp"
+#   }
+# }
+
+resource "google_compute_instance" "kthamel-instance-test" {
+  name         = "kthamel-demo-instance-test"
   project      = "terraform-gcp-infrastructure"
   machine_type = "e2-micro"
   zone         = "us-central1-a"
@@ -62,27 +82,10 @@ resource "google_compute_instance" "kthamel-instance-dev" {
       image = "debian-cloud/debian-11"
     }
   }
-  network_interface {
-    network = google_compute_network.kthamel-vpc-dev.id
-  }
-  labels = {
-    name    = "kthamel-terraform-gcp-instance-dev"
-    project = "kthamel-terraform-gcp"
-  }
-}
 
-resource "google_compute_instance" "kthamel-instance-test" {
-  name         = "kthamel-demo-instance-test"
-  project      = "terraform-gcp-infrastructure"
-  machine_type = "e2-micro"
-  zone         = "us-west1-a"
-  boot_disk {
-    initialize_params {
-      image = "debian-cloud/debian-11"
-    }
-  }
   network_interface {
-    network = google_compute_network.kthamel-vpc-test.id
+    subnetwork = google_compute_subnetwork.kthamel-vpc-test-subnet-public.name
+    access_config {}
   }
   labels = {
     name    = "kthamel-terraform-gcp-instance-test"
