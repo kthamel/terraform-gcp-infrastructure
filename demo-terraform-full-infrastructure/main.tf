@@ -80,6 +80,7 @@ resource "google_compute_instance" "kthamel-instance-dev" {
   }
   network_interface {
     subnetwork = google_compute_subnetwork.kthamel-vpc-dev-subnet-public.self_link
+    access_config {}
   }
   labels = {
     name    = "kthamel-terraform-gcp-instance-dev"
@@ -100,6 +101,7 @@ resource "google_compute_instance" "kthamel-instance-test" {
 
   network_interface {
     subnetwork = google_compute_subnetwork.kthamel-vpc-test-subnet-public.self_link
+    access_config {}
   }
   labels = {
     name    = "kthamel-terraform-gcp-instance-test"
