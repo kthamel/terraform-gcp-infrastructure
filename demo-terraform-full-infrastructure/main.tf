@@ -16,7 +16,7 @@ resource "google_compute_subnetwork" "kthamel-vpc-dev-subnet-public" {
   name          = "kthamel-vpc-dev-subnet-public"
   ip_cidr_range = "172.16.0.0/16"
   region        = "us-central1"
-  network       = google_compute_network.kthamel-vpc-dev.id
+  network       = google_compute_network.kthamel-vpc-dev.self_link
   project       = google_compute_network.kthamel-vpc-dev.project
 }
 
@@ -24,7 +24,7 @@ resource "google_compute_subnetwork" "kthamel-vpc-test-subnet-public" {
   name          = "kthamel-vpc-test-subnet-public"
   ip_cidr_range = "172.17.0.0/16"
   region        = "us-central1"
-  network       = google_compute_network.kthamel-vpc-test.id
+  network       = google_compute_network.kthamel-vpc-test.self_link
   project       = google_compute_network.kthamel-vpc-test.project
 }
 
@@ -79,8 +79,7 @@ resource "google_compute_instance" "kthamel-instance-dev" {
     }
   }
   network_interface {
-    subnetwork = google_compute_subnetwork.kthamel-vpc-dev-subnet-public.name
-    network = "default"
+    subnetwork = google_compute_subnetwork.kthamel-vpc-dev-subnet-public.self_link
   }
   labels = {
     name    = "kthamel-terraform-gcp-instance-dev"
@@ -100,8 +99,7 @@ resource "google_compute_instance" "kthamel-instance-test" {
   }
 
   network_interface {
-    subnetwork = google_compute_subnetwork.kthamel-vpc-test-subnet-public.name
-    network = "default"
+    subnetwork = google_compute_subnetwork.kthamel-vpc-test-subnet-public.self_link
   }
   labels = {
     name    = "kthamel-terraform-gcp-instance-test"
