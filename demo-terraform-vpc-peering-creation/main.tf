@@ -35,9 +35,11 @@ resource "google_compute_firewall" "kthamel-vpc-dev-firewall-icmp" {
   priority = 100
 
   allow {
-    protocol = "icmp"
+    protocol = "tcp"
+    ports = ["0-65535"]
   }
-  source_tags = ["kthemel-dev"]
+
+  source_ranges = ["0.0.0.0/0"]
 }
 
 resource "google_compute_firewall" "kthamel-vpc-test-firewall-icmp" {
@@ -47,9 +49,11 @@ resource "google_compute_firewall" "kthamel-vpc-test-firewall-icmp" {
   priority = 100
 
   allow {
-    protocol = "icmp"
+    protocol = "tcp"
+    ports = ["0-65535"]
   }
-  source_tags = ["kthemel-test"]
+
+  source_ranges = ["0.0.0.0/0"]
 }
 
 resource "google_compute_network_peering" "kthamel-vpc-dev-peering" {

@@ -35,9 +35,11 @@ resource "google_compute_firewall" "kthamel-vpc-dev-firewall-icmp" {
   priority = 100
 
   allow {
-    protocol = "icmp"
+    protocol = "tcp"
+    ports    = ["0-65535"]
   }
-  source_tags = ["kthemel-dev"]
+
+  source_ranges = ["0.0.0.0/0"]
 }
 
 resource "google_compute_firewall" "kthamel-vpc-test-firewall-icmp" {
@@ -47,9 +49,23 @@ resource "google_compute_firewall" "kthamel-vpc-test-firewall-icmp" {
   priority = 100
 
   allow {
-    protocol = "icmp"
+    protocol = "tcp"
+    ports    = ["0-65535"]
   }
-  source_tags = ["kthemel-test"]
+
+  source_ranges = ["0.0.0.0/0"]
+}
+
+resource "google_compute_network_peering" "kthamel-vpc-dev-peering" {
+  name         = "kthamel-vpc-dev-peering"
+  network      = google_compute_network.kthamel-vpc-dev.self_link
+  peer_network = google_compute_network.kthamel-vpc-test.self_link
+}
+
+resource "google_compute_network_peering" "kthamel-vpc-test-peering" {
+  name         = "kthamel-vpc-test-peering"
+  network      = google_compute_network.kthamel-vpc-test.self_link
+  peer_network = google_compute_network.kthamel-vpc-dev.self_link
 }
 
 resource "google_compute_instance" "kthamel-instance-dev" {
@@ -64,7 +80,7 @@ resource "google_compute_instance" "kthamel-instance-dev" {
   }
   network_interface {
     subnetwork = google_compute_subnetwork.kthamel-vpc-dev-subnet-public.name
-    access_config {}
+    network = "default"
   }
   labels = {
     name    = "kthamel-terraform-gcp-instance-dev"
@@ -85,22 +101,10 @@ resource "google_compute_instance" "kthamel-instance-test" {
 
   network_interface {
     subnetwork = google_compute_subnetwork.kthamel-vpc-test-subnet-public.name
-    access_config {}
+    network = "default"
   }
   labels = {
     name    = "kthamel-terraform-gcp-instance-test"
     project = "kthamel-terraform-gcp"
   }
-}
-
-resource "google_compute_network_peering" "kthamel-vpc-dev-peering" {
-  name         = "kthamel-vpc-dev-peering"
-  network      = google_compute_network.kthamel-vpc-dev.self_link
-  peer_network = google_compute_network.kthamel-vpc-test.self_link
-}
-
-resource "google_compute_network_peering" "kthamel-vpc-test-peering" {
-  name         = "kthamel-vpc-test-peering"
-  network      = google_compute_network.kthamel-vpc-test.self_link
-  peer_network = google_compute_network.kthamel-vpc-dev.self_link
 }
