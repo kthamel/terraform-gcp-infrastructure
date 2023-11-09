@@ -1,3 +1,5 @@
+data "google_client_openid_userinfo" "me" {}
+
 resource "google_compute_network" "kthamel-vpc-dev" {
   name                    = "kthamel-vpc-dev"
   project                 = "terraform-gcp-infrastructure"
@@ -68,6 +70,17 @@ resource "google_compute_network_peering" "kthamel-vpc-test-peering" {
   peer_network = google_compute_network.kthamel-vpc-dev.self_link
 }
 
+resource "tls_private_key" "kthamel-ssh" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "local_file" "kthamel-ssh-pem" {
+  content         = tls_private_key.kthamel-ssh.private_key_pem
+  filename        = "kthamel-key"
+  file_permission = "0600"
+}
+
 resource "google_compute_instance" "kthamel-instance-dev" {
   name         = "kthamel-demo-instance-dev"
   project      = "terraform-gcp-infrastructure"
@@ -78,10 +91,16 @@ resource "google_compute_instance" "kthamel-instance-dev" {
       image = "debian-cloud/debian-11"
     }
   }
+
   network_interface {
     subnetwork = google_compute_subnetwork.kthamel-vpc-dev-subnet-public.self_link
     access_config {}
   }
+
+  metadata = {
+    ssh-keys = "${split("@", data.google_client_openid_userinfo.me.email)[0]}:${tls_private_key.kthamel-ssh.public_key_openssh}"
+  }
+
   labels = {
     name    = "kthamel-terraform-gcp-instance-dev"
     project = "kthamel-terraform-gcp"
@@ -103,6 +122,11 @@ resource "google_compute_instance" "kthamel-instance-test" {
     subnetwork = google_compute_subnetwork.kthamel-vpc-test-subnet-public.self_link
     access_config {}
   }
+
+  metadata = {
+    ssh-keys = "${split("@", data.google_client_openid_userinfo.me.email)[0]}:${tls_private_key.kthamel-ssh.public_key_openssh}"
+  }
+
   labels = {
     name    = "kthamel-terraform-gcp-instance-test"
     project = "kthamel-terraform-gcp"
