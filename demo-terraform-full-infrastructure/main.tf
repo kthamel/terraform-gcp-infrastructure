@@ -30,8 +30,8 @@ resource "google_compute_subnetwork" "kthamel-vpc-test-subnet-public" {
   project       = google_compute_network.kthamel-vpc-test.project
 }
 
-resource "google_compute_firewall" "kthamel-vpc-dev-firewall-icmp" {
-  name     = "kthamel-vpc-dev-firewall-icmp"
+resource "google_compute_firewall" "kthamel-vpc-dev-firewall-all" {
+  name     = "kthamel-vpc-dev-firewall-all"
   network  = google_compute_network.kthamel-vpc-dev.name
   project  = google_compute_network.kthamel-vpc-dev.project
   priority = 100
@@ -41,11 +41,24 @@ resource "google_compute_firewall" "kthamel-vpc-dev-firewall-icmp" {
     ports    = ["0-65535"]
   }
 
-  source_ranges = ["0.0.0.0/0"]
+  source_ranges = ["0.0.0.0/0"] // Have to change into /32 public ip
 }
 
-resource "google_compute_firewall" "kthamel-vpc-test-firewall-icmp" {
-  name     = "kthamel-vpc-test-firewall-icmp"
+resource "google_compute_firewall" "kthamel-vpc-dev-firewall-icmp" {
+  name     = "kthamel-vpc-dev-firewall-icmp"
+  network  = google_compute_network.kthamel-vpc-dev.name
+  project  = google_compute_network.kthamel-vpc-dev.project
+  priority = 101
+
+  allow {
+    protocol = "icmp"
+  }
+
+  source_ranges = ["172.17.0.0/16"]
+}
+
+resource "google_compute_firewall" "kthamel-vpc-test-firewall-all" {
+  name     = "kthamel-vpc-test-firewall-all"
   network  = google_compute_network.kthamel-vpc-test.name
   project  = google_compute_network.kthamel-vpc-test.project
   priority = 100
@@ -55,7 +68,20 @@ resource "google_compute_firewall" "kthamel-vpc-test-firewall-icmp" {
     ports    = ["0-65535"]
   }
 
-  source_ranges = ["0.0.0.0/0"]
+  source_ranges = ["0.0.0.0/0"] // Have to change into /32 public ip
+}
+
+resource "google_compute_firewall" "kthamel-vpc-test-firewall-icmp" {
+  name     = "kthamel-vpc-test-firewall-icmp"
+  network  = google_compute_network.kthamel-vpc-test.name
+  project  = google_compute_network.kthamel-vpc-test.project
+  priority = 101
+
+  allow {
+    protocol = "icmp"
+  }
+
+  source_ranges = ["172.16.0.0/16"]
 }
 
 resource "google_compute_network_peering" "kthamel-vpc-dev-peering" {
