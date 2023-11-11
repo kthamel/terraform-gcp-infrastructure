@@ -93,3 +93,29 @@ resource "google_compute_instance" "kthamel-instance-dev" {
     project = "kthamel-terraform-gcp"
   }
 }
+
+resource "google_compute_instance" "kthamel-instance-dev-public" {
+  name         = "kthamel-demo-instance-dev-public"
+  project      = "terraform-gcp-infrastructure"
+  machine_type = "e2-micro"
+  zone         = "us-central1-a"
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-11"
+    }
+  }
+
+  network_interface {
+    subnetwork = google_compute_subnetwork.kthamel-vpc-dev-subnet-public.self_link
+    access_config {}
+  }
+
+  metadata = {
+    ssh-keys = "${split("@", data.google_client_openid_userinfo.me.email)[0]}:${tls_private_key.kthamel-ssh.public_key_openssh}"
+  }
+
+  labels = {
+    name    = "kthamel-terraform-gcp-instance-dev"
+    project = "kthamel-terraform-gcp"
+  }
+}
