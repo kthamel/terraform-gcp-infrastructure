@@ -55,6 +55,19 @@ resource "google_compute_instance" "kthamel-instance" {
   project                 = "terraform-gcp-infrastructure"
   machine_type            = "e2-micro"
   zone                    = "us-central1-a"
+  metadata_startup_script = <<-USERDATA
+    #!/bin/bash
+    sudo sleep 120
+    sudo mkfs.ext4 -F /dev/sdb
+    sudo mkdir /mnt/datax
+    sudo mount /dev/sdb /mnt/datax
+    BLK_ID=$(sudo blkid /dev/sdb | cut -f2 -d" ")
+    echo "$BLK_ID     /mnt/datax   ext4    defaults   0   2" | sudo tee --append /etc/fstab
+    sudo mount -a
+    cd /mnt/datax
+    sudo hostname > test.txt
+  USERDATA
+
   boot_disk {
     initialize_params {
       image = "debian-cloud/debian-11"
