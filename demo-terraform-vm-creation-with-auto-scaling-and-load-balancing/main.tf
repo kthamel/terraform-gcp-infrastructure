@@ -59,7 +59,7 @@ resource "google_compute_firewall" "kthamel-vpc-dev-firewall-all" {
 
   allow {
     protocol = "tcp"
-    ports    = ["0-65535"]
+    ports    = ["80"]
   }
 
   source_ranges = ["0.0.0.0/0"] // Have to change into /32 public ip
@@ -86,7 +86,7 @@ resource "google_compute_firewall" "kthamel-vpc-test-firewall-all" {
 
   allow {
     protocol = "tcp"
-    ports    = ["0-65535"]
+    ports    = ["80"]
   }
 
   source_ranges = ["0.0.0.0/0"] // Have to change into /32 public ip
