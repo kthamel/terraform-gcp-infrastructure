@@ -1,6 +1,7 @@
 resource "google_container_cluster" "kthamel-gke-cluster" {
   name                     = "kthamel-gke-cluster"
-  location                 = "us-central1"
+  // location                 = "us-central1" // Multi AZ deployment configuration
+  location = "us-central1-a" // Single AZ deployment configuration
   remove_default_node_pool = true
   initial_node_count       = 1
   project                  = "terraform-gcp-infrastructure"
@@ -18,11 +19,19 @@ resource "google_container_node_pool" "kthamel-gke-cluster-nodes" {
   name       = "kthamel-gke-nodes"
   project    = "terraform-gcp-infrastructure"
   cluster    = google_container_cluster.kthamel-gke-cluster.id
-  node_count = 2
+  node_count = 1
+
+  autoscaling {
+    min_node_count = 1
+    max_node_count = 2
+  }
 
   node_config {
     preemptible  = true
     machine_type = "e2-micro"
     disk_size_gb = 20
+    labels = {
+      name = "worker-node"
+    }
   }
 }
