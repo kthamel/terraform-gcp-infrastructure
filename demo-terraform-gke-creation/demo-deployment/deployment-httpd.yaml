@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: deployment-httpd
+  name: deployment-httpd
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: deployment-httpd
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: deployment-httpd
+    spec:
+      containers:
+      - image: httpd:latest
+        name: httpd
+        ports:
+        - containerPort: 80
+        resources: {}
+      tolerations:
+      - key: "keyx"
+        operator: "Equal"
+        value: "dex"
+        effect: "NoSchedule"
+status: {}
