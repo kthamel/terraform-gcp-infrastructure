@@ -1,7 +1,7 @@
 resource "google_container_cluster" "kthamel-gke-cluster" {
-  name                     = "kthamel-gke-cluster"
+  name = "kthamel-gke-cluster"
   // location                 = "us-central1" // Multi AZ deployment configuration
-  location = "us-central1-a" // Single AZ deployment configuration
+  location                 = "us-central1-a" // Single AZ deployment configuration
   remove_default_node_pool = true
   initial_node_count       = 1
   project                  = "terraform-gcp-infrastructure"
@@ -15,8 +15,8 @@ resource "google_container_cluster" "kthamel-gke-cluster" {
   }
 }
 
-resource "google_container_node_pool" "kthamel-gke-cluster-nodes" {
-  name       = "kthamel-gke-nodes"
+resource "google_container_node_pool" "kthamel-gke-cluster-system-nodes" {
+  name       = "kthamel-gke-system-nodes"
   project    = "terraform-gcp-infrastructure"
   cluster    = google_container_cluster.kthamel-gke-cluster.id
   node_count = 1
@@ -29,7 +29,33 @@ resource "google_container_node_pool" "kthamel-gke-cluster-nodes" {
   node_config {
     preemptible  = true
     machine_type = "e2-micro"
-    disk_size_gb = 20
+    disk_size_gb = 10
+    labels = {
+      name = "system-node"
+    }
+  }
+}
+
+resource "google_container_node_pool" "kthamel-gke-cluster-worker-nodes" {
+  name       = "kthamel-gke-worker-nodes"
+  project    = "terraform-gcp-infrastructure"
+  cluster    = google_container_cluster.kthamel-gke-cluster.id
+  node_count = 1
+
+  autoscaling {
+    min_node_count = 1
+    max_node_count = 2
+  }
+
+  node_config {
+    preemptible  = true
+    machine_type = "e2-micro"
+    disk_size_gb = 10
+    taint {
+      key    = "keyx"
+      value  = "devx"
+      effect = "NO_SCHEDULE"
+    }
     labels = {
       name = "worker-node"
     }
