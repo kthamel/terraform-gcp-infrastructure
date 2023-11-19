@@ -6,7 +6,7 @@ metadata:
     app: deployment-httpd
   name: deployment-httpd
 spec:
-  replicas: 2
+  replicas: 10
   selector:
     matchLabels:
       app: deployment-httpd
@@ -17,15 +17,19 @@ spec:
       labels:
         app: deployment-httpd
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: name
+                operator: In
+                values:
+                - worker-node
       containers:
       - image: httpd:latest
         name: httpd
         ports:
         - containerPort: 80
         resources: {}
-      tolerations:
-      - key: "keyx"
-        operator: "Equal"
-        value: "dex"
-        effect: "NoSchedule"
 status: {}
