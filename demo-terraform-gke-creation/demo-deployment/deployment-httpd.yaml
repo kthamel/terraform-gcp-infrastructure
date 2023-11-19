@@ -6,7 +6,7 @@ metadata:
     app: deployment-httpd
   name: deployment-httpd
 spec:
-  replicas: 2
+  replicas: 4
   selector:
     matchLabels:
       app: deployment-httpd
