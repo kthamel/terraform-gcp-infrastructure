@@ -23,7 +23,7 @@ resource "google_container_node_pool" "kthamel-gke-cluster-system-nodes" {
 
   autoscaling {
     min_node_count = 1
-    max_node_count = 2
+    max_node_count = 3
   }
 
   node_config {
@@ -44,18 +44,13 @@ resource "google_container_node_pool" "kthamel-gke-cluster-worker-nodes" {
 
   autoscaling {
     min_node_count = 1
-    max_node_count = 2
+    max_node_count = 3
   }
 
   node_config {
     preemptible  = true
     machine_type = "e2-micro"
     disk_size_gb = 10
-    taint {
-      key    = "keyx"
-      value  = "devx"
-      effect = "NO_SCHEDULE"
-    }
     labels = {
       name = "worker-node"
     }
