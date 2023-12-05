@@ -11,10 +11,10 @@ resource "google_storage_bucket_object" "kthamel-storage-object" {
 }
 
 resource "google_cloudfunctions_function" "kthamel-dev-function" {
-  name                  = "kthamel-dev-function"
+  name                  = "hello-world"
   region                = "us-central1"
   project               = "terraform-gcp-infrastructure"
-  runtime               = "nodejs18"
+  runtime               = "nodejs20"
   available_memory_mb   = "256"
   trigger_http          = true
   source_archive_bucket = google_storage_bucket.kthamel-storage-bucket-dev.name
@@ -24,3 +24,4 @@ resource "google_cloudfunctions_function" "kthamel-dev-function" {
 output "cloud-function-url" {
   value = google_cloudfunctions_function.kthamel-dev-function.https_trigger_url
 }
+
