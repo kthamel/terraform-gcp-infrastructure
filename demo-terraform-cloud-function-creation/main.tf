@@ -11,7 +11,7 @@ resource "google_storage_bucket_object" "kthamel-storage-object" {
 }
 
 resource "google_cloudfunctions_function" "kthamel-dev-function" {
-  name                  = "app"
+  name                  = "kthamel-dev-function"
   region                = "us-central1"
   project               = "terraform-gcp-infrastructure"
   runtime               = "nodejs18"
