@@ -7,19 +7,19 @@ resource "google_compute_network" "kthamel-vpc-dev" {
 
 resource "google_compute_subnetwork" "kthamel-vpc-dev-subnet-1" {
   name          = "kthamel-vpc-dev-subnet-1"
-  ip_cidr_range = "172.16.0.0/16"
+  ip_cidr_range = "172.16.0.0/18"
   region        = "us-central1"
   network       = google_compute_network.kthamel-vpc-dev.self_link
   project       = google_compute_network.kthamel-vpc-dev.project
 
   secondary_ip_range {
     range_name    = "pods"
-    ip_cidr_range = "172.17.0.0/16"
+    ip_cidr_range = "172.17.0.0/18"
   }
 
   secondary_ip_range {
     range_name    = "svcs"
-    ip_cidr_range = "172.18.0.0/16"
+    ip_cidr_range = "172.18.0.0/18"
   }
 }
 
